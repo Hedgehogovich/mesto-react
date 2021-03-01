@@ -90,14 +90,14 @@ class Api {
 
   _getJsonFromResponse(response) {
     if (!response.ok) {
-      return Promise.reject(`Ошибка: ${response.status}`)
+      return Promise.reject(`Ошибка: ${response.status}`);
     }
 
     return response.json();
   }
 
   _getOkStatusFromResponse(response) {
-    return response.ok;
+    return response.ok || Promise.reject(`Ошибка: ${response.status}`);
   }
 }
 
