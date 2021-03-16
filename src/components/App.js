@@ -3,11 +3,11 @@ import {useState, useEffect} from 'react';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import CardDeleteConfirmationPopup from './CardDeleteConfirmationPopup';
 
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
@@ -17,7 +17,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-  const [isDeleteConfirmationPopupOpen] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [cards, setCards] = useState([]);
@@ -81,14 +81,20 @@ function App() {
   }
 
   function handleCardDelete(card) {
-    const {_id: cardId} = card;
+    setCardToDelete(card);
+  }
+
+  function handleCardDeleteConfirmation() {
+    const {_id: cardId} = cardToDelete;
 
     api.removeCard(cardId)
       .then(() => {
         setCards(state => {
           return state.filter(stateCard => stateCard._id !== cardId);
         });
-      });
+        setCardToDelete(null);
+      })
+      .catch(console.error);
   }
 
   function closeAllPopups() {
@@ -96,6 +102,7 @@ function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
+    setCardToDelete(null);
   }
 
   useEffect(() => {
@@ -139,12 +146,10 @@ function App() {
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateAvatar}
         />
-        <PopupWithForm
-          name="delete"
-          title="Вы уверены?"
-          isOpen={isDeleteConfirmationPopupOpen}
+        <CardDeleteConfirmationPopup
+          isOpen={!!cardToDelete}
           onClose={closeAllPopups}
-          submitButtonText="Да"
+          onCardDeleteConfirmation={handleCardDeleteConfirmation}
         />
         <ImagePopup
           card={selectedCard}
