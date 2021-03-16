@@ -4,6 +4,7 @@ function PopupWithForm({
    children,
    isOpen,
    onClose,
+   onSubmit,
    submitButtonText = 'Сохранить'
 }) {
   const rootClassName = `popup popup_background_dark ${name}-popup${isOpen ? ' popup_opened' : null}`;
@@ -11,7 +12,7 @@ function PopupWithForm({
   return (
     <div className={rootClassName}>
       <div className="popup__container popup__container_form">
-        <form name={name} className="edit-form" noValidate>
+        <form onSubmit={onSubmit} name={name} className="edit-form" noValidate>
           <h2 className="edit-form__title">
             {title}
           </h2>

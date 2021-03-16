@@ -39,6 +39,12 @@ class Api {
     }).then(this._getOkStatusFromResponse);
   }
 
+  changeLikeCardStatus(cardId, isLiked) {
+    return isLiked
+      ? this.removeLikeFromCard(cardId)
+      : this.likeCard(cardId);
+  }
+
   likeCard(cardId) {
     return this._makeRequest({
       action: `/cards/likes/${cardId}`,
