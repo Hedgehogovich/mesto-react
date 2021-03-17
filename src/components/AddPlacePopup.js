@@ -1,27 +1,28 @@
 import {useState, useEffect} from 'react';
 
 import PopupWithForm from './PopupWithForm';
+import PopupWithFormInput from './PopupWithFormInput';
 
-function AddPlacePopup({isOpen, onClose, onAddPlace}) {
+function AddPlacePopup({isOpen, onClose, onAddPlace, isLoading}) {
   const [name, setName] = useState('');
   const [link, setLink] = useState('');
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleNameChange(evt) {
+    setName(evt.target.value);
+  }
+
+  function handleLinkChange(evt) {
+    setLink(evt.target.value);
+  }
+
+  function handleFormSubmit(evt) {
+    evt.preventDefault();
 
     onAddPlace({name, link});
   }
 
-  function handleNameChange(e) {
-    setName(e.target.value);
-  }
-
-  function handleLinkChange(e) {
-    setLink(e.target.value);
-  }
-
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setName('');
       setLink('');
     }
@@ -31,40 +32,31 @@ function AddPlacePopup({isOpen, onClose, onAddPlace}) {
     <PopupWithForm
       name="place"
       title="Новое место"
+      isLoading={isLoading}
       isOpen={isOpen}
       onClose={onClose}
-      onSubmit={handleSubmit}
+      onSubmit={handleFormSubmit}
     >
-      <label htmlFor="place-name" className="edit-form__field">
-        <input
-          id="place-name"
-          value={name}
-          onChange={handleNameChange}
-          type="text"
-          name="name"
-          placeholder="Название"
-          className="edit-form__input"
-          required
-          minLength="2"
-          maxLength="30"
-          aria-describedby="place-name-error"
-        />
-        <span id="place-name-error" className="edit-form__error" />
-      </label>
-      <label htmlFor="picture" className="edit-form__field">
-        <input
-          id="picture"
-          value={link}
-          onChange={handleLinkChange}
-          type="url"
-          name="link"
-          placeholder="Ссылка на картинку"
-          className="edit-form__input"
-          required
-          aria-describedby="picture-error"
-        />
-        <span id="picture-error" className="edit-form__error" />
-      </label>
+      <PopupWithFormInput
+        id="place-name"
+        value={name}
+        onChange={handleNameChange}
+        type="text"
+        name="place-name"
+        placeholder="Название"
+        required
+        minLength="2"
+        maxLength="30"
+      />
+      <PopupWithFormInput
+        id="picture"
+        value={link}
+        onChange={handleLinkChange}
+        type="url"
+        name="link"
+        placeholder="Ссылка на картинку"
+        required
+      />
     </PopupWithForm>
   );
 }

@@ -13,7 +13,7 @@ function Card({card, onCardClick, onCardLike, onCardDelete}) {
   }
 
   function handleLikeClick() {
-    onCardLike(card);
+    onCardLike({card, isLiked});
   }
 
   function handleCardDelete() {
@@ -25,7 +25,12 @@ function Card({card, onCardClick, onCardLike, onCardDelete}) {
       <figure className="card">
         <img onClick={handleClick} src={card.link} alt={card.name} className="card__image" />
         {isOwn && (
-          <button onClick={handleCardDelete} className="card__delete" type="button" aria-label="Удалить фотографию" />
+          <button
+            onClick={handleCardDelete}
+            className="card__delete"
+            type="button"
+            aria-label="Удалить фотографию"
+          />
         )}
         <figcaption className="card__caption">
           <h2 className="card__name">

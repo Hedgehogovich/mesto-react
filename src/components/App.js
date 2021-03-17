@@ -15,12 +15,22 @@ import {api} from '../utils/api';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [isProfileUpdating, setIsProfileUpdating] = useState(false);
+
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [isPlaceAdding, setIsPlaceAdding] = useState(false);
+
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isAvatarUpdating, setIsAvatarUpdating] = useState(false);
+
   const [cardToDelete, setCardToDelete] = useState(null);
-  const [selectedCard, setSelectedCard] = useState(null);
+  const [isCardDeleting, setIsCardDeleting] = useState(false);
+
+  const [isLikeRequestInProcess, setIsLikeRequestInProcess] = useState(false);
+
   const [currentUser, setCurrentUser] = useState(null);
   const [cards, setCards] = useState([]);
+  const [selectedPreviewCard, setSelectedPreviewCard] = useState(null);
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -35,39 +45,65 @@ function App() {
   }
 
   function handleCardClick(card) {
-    setSelectedCard(card);
+    setSelectedPreviewCard(card);
+  }
+
+  function handleCardDelete(card) {
+    setCardToDelete(card);
   }
 
   function handleUpdateUser(userData) {
+    if (isProfileUpdating) {
+      return;
+    }
+
+    setIsProfileUpdating(true);
     api.updateProfile(userData)
       .then(updatedUserData => {
         setCurrentUser(updatedUserData);
         setIsEditProfilePopupOpen(false);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsProfileUpdating(false));
   }
 
   function handleUpdateAvatar(avatar) {
+    if (isAvatarUpdating) {
+      return;
+    }
+
+    setIsAvatarUpdating(true);
     api.updateAvatar(avatar)
       .then(updatedUserData => {
         setCurrentUser(updatedUserData);
         setIsEditAvatarPopupOpen(false);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsAvatarUpdating(false));
   }
 
   function handleAddPlace(cardData) {
+    if (isPlaceAdding) {
+      return;
+    }
+
+    setIsPlaceAdding(true);
+
     api.addCard(cardData)
       .then(newCardData => {
         setCards(state => [newCardData, ...state]);
         setIsAddPlacePopupOpen(false);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsPlaceAdding(false));
   }
 
-  function handleCardLike(card) {
-    const {_id: userId} = currentUser;
-    const isLiked = currentUser && card.likes.some(item => item._id === userId);
+  function handleCardLike({card, isLiked}) {
+    if (isLikeRequestInProcess) {
+      return;
+    }
+
+    setIsLikeRequestInProcess(true);
 
     api.changeLikeCardStatus(card._id, isLiked)
       .then(updatedCardData => {
@@ -77,14 +113,17 @@ function App() {
           return state.map(stateCard => stateCard._id === cardId ? updatedCardData : stateCard);
         });
       })
-      .catch(console.error);
-  }
-
-  function handleCardDelete(card) {
-    setCardToDelete(card);
+      .catch(console.error)
+      .finally(() => setIsLikeRequestInProcess(false));
   }
 
   function handleCardDeleteConfirmation() {
+    if (isCardDeleting) {
+      return;
+    }
+
+    setIsLikeRequestInProcess(true);
+
     const {_id: cardId} = cardToDelete;
 
     api.removeCard(cardId)
@@ -94,24 +133,25 @@ function App() {
         });
         setCardToDelete(null);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => setIsCardDeleting(false));
   }
 
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
-    setSelectedCard(null);
+    setSelectedPreviewCard(null);
     setCardToDelete(null);
   }
 
   useEffect(() => {
-    api.getCards()
-      .then(setCards)
-      .catch(console.error);
-
     api.getAuthorizedUserInfo()
       .then(setCurrentUser)
+      .catch(console.error);
+
+    api.getCards()
+      .then(setCards)
       .catch(console.error);
   }, []);
 
@@ -135,24 +175,28 @@ function App() {
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
+          isLoading={isProfileUpdating}
         />
         <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlace}
+          isLoading={isPlaceAdding}
         />
         <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateAvatar}
+          isLoading={isAvatarUpdating}
         />
         <CardDeleteConfirmationPopup
           isOpen={!!cardToDelete}
           onClose={closeAllPopups}
           onCardDeleteConfirmation={handleCardDeleteConfirmation}
+          isLoading={isCardDeleting}
         />
         <ImagePopup
-          card={selectedCard}
+          card={selectedPreviewCard}
           onClose={closeAllPopups}
         />
       </CurrentUserContext.Provider>
