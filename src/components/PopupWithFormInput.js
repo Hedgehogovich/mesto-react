@@ -1,6 +1,8 @@
-import {useState, useEffect, useRef, useContext} from 'react';
+import {useEffect, useContext} from 'react';
 
 import PopupOpenedContext from '../contexts/PopupOpenedContext';
+
+import {useInputValidation} from '../hooks/useInputValidation';
 
 function PopupWithFormInput({
   id,
@@ -9,47 +11,37 @@ function PopupWithFormInput({
   className = '',
   ...restAttributes
 }) {
-  const inputRef = useRef();
+  const {
+    ref,
+    isTouched,
+    errors,
+    handleChange,
+    resetInputValidation
+  } = useInputValidation();
   const popupOpened = useContext(PopupOpenedContext);
 
-  const [validationMessage, setValidationMessage] = useState('');
-  const [touched, setTouched] = useState(false);
-
   const inputClass = `edit-form__input${className ? ` ${className}` : ''}`
-  const errorBlockClass = `edit-form__error${validationMessage && touched ? ' edit-form__error_visible' : ''}`;
-
-  function handleInputChange(evt) {
-    onChange(evt);
-    if (!touched) {
-      setTouched(true);
-    }
-  }
-
-  useEffect(() => {
-    if (inputRef.current) {
-      setValidationMessage(inputRef.current.validationMessage || '');
-    }
-  }, [inputRef, value]);
+  const errorBlockClass = `edit-form__error${errors && isTouched ? ' edit-form__error_visible' : ''}`;
 
   useEffect(() => {
     if (!popupOpened) {
-      setTouched(false);
+      resetInputValidation();
     }
-  }, [popupOpened]);
+  }, [popupOpened, resetInputValidation]);
 
   return (
     <label htmlFor={id} className="edit-form__field">
       <input
-        ref={inputRef}
+        ref={ref}
         id={id}
         value={value}
-        onChange={handleInputChange}
+        onChange={handleChange(onChange)}
         className={inputClass}
-        {...restAttributes}
         aria-describedby={`${id}-error`}
+        {...restAttributes}
       />
       <span id={`${id}-error`} className={errorBlockClass}>
-        {validationMessage}
+        {errors}
       </span>
     </label>
   );

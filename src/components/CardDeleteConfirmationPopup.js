@@ -1,6 +1,6 @@
 import PopupWithForm from './PopupWithForm';
 
-function CardDeleteConfirmationPopup({isOpen, onClose, onCardDeleteConfirmation}) {
+function CardDeleteConfirmationPopup({isOpen, onClose, onCardDeleteConfirmation, isLoading}) {
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -12,6 +12,7 @@ function CardDeleteConfirmationPopup({isOpen, onClose, onCardDeleteConfirmation}
       name="delete"
       title="Вы уверены?"
       isOpen={isOpen}
+      isLoading={isLoading}
       onClose={onClose}
       onSubmit={handleSubmit}
       submitButtonText="Да"

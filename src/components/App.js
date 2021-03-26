@@ -122,7 +122,7 @@ function App() {
       return;
     }
 
-    setIsLikeRequestInProcess(true);
+    setIsCardDeleting(true);
 
     const {_id: cardId} = cardToDelete;
 
