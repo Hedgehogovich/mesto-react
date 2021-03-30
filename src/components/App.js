@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import {Switch} from 'react-router-dom';
 
 import Header from './Header';
 import Main from './Main';
@@ -9,10 +8,6 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import CardDeleteConfirmationPopup from './CardDeleteConfirmationPopup';
-import Login from './Login';
-import Register from './Register';
-import ProtectedRoute from './ProtectedRoute';
-import NotAuthorizedProtectedRoute from './NotAuthorizedProtectedRoute';
 
 import CurrentUserContext from '../contexts/CurrentUserContext';
 
@@ -165,28 +160,15 @@ function App() {
       <CurrentUserContext.Provider value={currentUser}>
         <div className="page__content">
           <Header />
-          <Switch>
-            <ProtectedRoute
-              component={Main}
-              path="/"
-              exact
-              onAddPlace={handleAddPlaceClick}
-              onEditAvatar={handleEditAvatarClick}
-              onEditProfile={handleEditProfileClick}
-              onCardClick={handleCardClick}
-              onCardDelete={handleCardDelete}
-              onCardLike={handleCardLike}
-              cards={cards}
-            />
-            <NotAuthorizedProtectedRoute
-              component={Login}
-              path="/sign-in"
-            />
-            <NotAuthorizedProtectedRoute
-              component={Register}
-              path="/sign-up"
-            />
-          </Switch>
+          <Main
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
+            onCardClick={handleCardClick}
+            onCardDelete={handleCardDelete}
+            onCardLike={handleCardLike}
+            cards={cards}
+          />
           <Footer />
         </div>
         <EditProfilePopup

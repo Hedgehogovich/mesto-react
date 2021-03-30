@@ -11,16 +11,6 @@
 
 @import url('./blocks/header/header.css');
 @import url('./blocks/header/__logo/header__logo.css');
-@import url('./blocks/header/__logo/_link/header__logo_link.css');
-@import url('./blocks/header/__unauthorized-link/header__unauthorized-link.css');
-@import url('./blocks/header/__menu/_desktop/header__menu_desktop.css');
-@import url('./blocks/header/__menu/_mobile/header__menu_mobile.css');
-@import url('./blocks/header/__menu/_mobile/_opened/header__menu_mobile_opened.css');
-@import url('./blocks/header/__menu-toggle/header__menu-toggle.css');
-@import url('./blocks/header/__menu-toggle/_mobile/header__menu-toggle_mobile.css');
-@import url('./blocks/header/__menu-toggle/_mobile/_active/header__menu-toggle_mobile_active.css');
-@import url('./blocks/header/__username/header__username.css');
-@import url('./blocks/header/__logout/header__logout.css');
 
 @import url('./blocks/profile/profile.css');
 @import url('./blocks/profile/__user/profile__user.css');

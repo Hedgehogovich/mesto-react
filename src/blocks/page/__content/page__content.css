@@ -9,7 +9,7 @@
 
 @media screen and (max-width: 740px) {
   .page__content {
-    padding-top: 0;
+    padding-top: 28px;
     padding-bottom: 36px;
   }
 }
